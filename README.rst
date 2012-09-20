@@ -15,7 +15,7 @@ You can install from PyPI::
 Example Of Usage
 ----------------
 
-You should be add `standalone-application <http://vk.com/editapp?act=create>`_, and copy this app ID.
+You should be create `standalone-application <http://vk.com/editapp?act=create>`_, and copy this app ID.
 
 Now, you can use it::
 
