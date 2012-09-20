@@ -76,11 +76,10 @@ class VKAuth(object):
         return page
 
     def _generate_auth_params(self):
-        query_params = {
+        return {
             'client_id': self._app_id,
             'redirect_uri': 'http://oauth.vk.com/blank.html',
             'display': 'wap',
             'scope': ','.join(self._scopes),
             'response_type': 'token'
         }
-        return query_params
