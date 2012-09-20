@@ -18,8 +18,17 @@ class VKAuth(object):
         self._cookies = {}
         self.access_token = ''
         self.used_id = 0
+        self._get_access_token()
 
     def _get_access_token(self):
+        auth_sended_page = self._auth()
+        if urlparse(auth_sended_page.url).path != '/blank.html':
+            authorized_page = self._get_app_access(auth_sended_page.content)
+            self._parse_authorized_url(authorized_page.url)
+        else:
+            self._parse_authorized_url(auth_sended_page.url)
+
+    def _auth(self):
         auth_url = self._generate_auth_url()
         auth_page = requests.get(auth_url)
         parser = self._form_parser_class()
@@ -34,11 +43,7 @@ class VKAuth(object):
         auth_sended_page = self._send_request(parser.method, parser.url,
                                               parser.params)
         self._cookies = auth_sended_page.cookies
-        if urlparse(auth_sended_page.url).path != '/blank.html':
-            authorized_page = self._get_app_access(auth_sended_page.content)
-            self._parse_authorized_url(authorized_page.url)
-        else:
-            self._parse_authorized_url(auth_sended_page.url)
+        return auth_sended_page
 
     def _parse_authorized_url(self, url):
         url = urlparse(url)
