@@ -18,6 +18,7 @@ Example Of Usage
 You should be add `standalone-application <http://vk.com/editapp?act=create>`_, and copy this app ID.
 
 Now, you can use it::
+
     >>> import pyvka
     >>> vk_login = 'your@mail.or.phonenumber.here'
     >>> vk_password = 'b19b00b5'
