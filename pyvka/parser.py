@@ -26,7 +26,7 @@ class FormParser(HTMLParser):
         attrs = dict((name.lower(), value) for name, value in attrs)
         if tag == 'form':
             self.url = attrs['action']
-            self.method = attrs.get('method', 'GET')
+            self.method = attrs.get('method', 'GET').upper()
         elif tag == 'input' and 'type' in attrs and 'name' in attrs:
             if attrs['type'] in ['hidden', 'text', 'password', 'submit']:
                 self.params[attrs['name']] = attrs.get('value', '')
