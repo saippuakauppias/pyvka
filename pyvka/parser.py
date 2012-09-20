@@ -11,7 +11,7 @@ class FormParser(HTMLParser):
         self.params = {}
         self.in_form = False
         self.form_parsed = False
-        self.method = 'GET'
+        self.method = ''
 
     def handle_starttag(self, tag, attrs):
         tag = tag.lower()
@@ -26,14 +26,10 @@ class FormParser(HTMLParser):
         attrs = dict((name.lower(), value) for name, value in attrs)
         if tag == 'form':
             self.url = attrs['action']
-            if 'method' in attrs:
-                self.method = attrs['method']
+            self.method = attrs.get('method', 'GET')
         elif tag == 'input' and 'type' in attrs and 'name' in attrs:
-            if attrs['type'] in ['hidden', 'text', 'password']:
-                if 'value' in attrs:
-                    self.params[attrs['name']] = attrs['value']
-                else:
-                    self.params[attrs['name']] = ''
+            if attrs['type'] in ['hidden', 'text', 'password', 'submit']:
+                self.params[attrs['name']] = attrs.get('value', '')
 
     def handle_endtag(self, tag):
         tag = tag.lower()
