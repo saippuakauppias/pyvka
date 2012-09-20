@@ -16,6 +16,7 @@ class VKAuth(object):
         self._scopes = scopes
         self._form_parser_class = form_parser_class or FormParser
         self._cookies = {}
+        self._auth_url = 'http://oauth.vk.com/authorize'
         self.access_token = ''
         self.used_id = 0
         self._get_access_token()
@@ -29,8 +30,8 @@ class VKAuth(object):
             self._parse_authorized_url(auth_sended_page.url)
 
     def _auth(self):
-        auth_url = self._generate_auth_url()
-        auth_page = requests.get(auth_url)
+        auth_params = self._generate_auth_params()
+        auth_page = self._send_request(self._auth_url, auth_params)
         parser = self._form_parser_class()
         parser.feed(auth_page.content)
         parser.close()
@@ -40,9 +41,8 @@ class VKAuth(object):
             raise AuthError('Not found form in auth page')
         parser.params['email'] = self._login
         parser.params['pass'] = self._pwd
-        auth_sended_page = self._send_request(parser.method, parser.url,
-                                              parser.params)
-        self._cookies = auth_sended_page.cookies
+        auth_sended_page = self._send_request(parser.url, parser.params,
+                                              parser.method)
         return auth_sended_page
 
     def _parse_authorized_url(self, url):
@@ -61,20 +61,21 @@ class VKAuth(object):
         parser.close()
         if not parser.form_parsed or parser.url is None:
             raise AuthError('Not found form in get application access page')
-        app_access_sended_page = self._send_request(parser.method, parser.url,
-                                                    parser.params)
+        app_access_sended_page = self._send_request(parser.url, parser.params,
+                                                    parser.method)
         return app_access_sended_page
 
-    def _send_request(self, method, url, data):
+    def _send_request(self, url, data, method='GET'):
         if method == 'POST':
             page = requests.post(url, data=data, allow_redirects=True,
                                  cookies=self._cookies)
         else:
             url = '{0}?{1}'.format(url, urlencode(data))
             page = requests.get(url, cookies=self._cookies)
+        self._cookies.update(page.cookies.items())
         return page
 
-    def _generate_auth_url(self):
+    def _generate_auth_params(self):
         query_params = {
             'client_id': self._app_id,
             'redirect_uri': 'http://oauth.vk.com/blank.html',
@@ -82,5 +83,4 @@ class VKAuth(object):
             'scope': ','.join(self._scopes),
             'response_type': 'token'
         }
-        query_params = urlencode(query_params)
-        return 'http://oauth.vk.com/authorize?{0}'.format(query_params)
+        return query_params
