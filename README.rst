@@ -19,9 +19,10 @@ You should be add `standalone-application <http://vk.com/editapp?act=create>`_, 
 
 Now, you can use it::
 
-    >>> import pyvka
-    >>> vk_login = 'your@mail.or.phonenumber.here'
+    >>> from pyvka import VKAuth
+    >>> vk_login = 'your@email.or.phone.number.here'
     >>> vk_password = 'b19b00b5'
     >>> app_id = 123456789
     >>> scopes = ['wall', 'friends']
-    >>> access_token = pyvka.get_access_token(vk_login, vk_password, app_id, scopes)
+    >>> vkauth = VKAuth(vk_login, vk_password, app_id, scopes)
+    >>> access_token = vkauth.get_access_token()
