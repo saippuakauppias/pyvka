@@ -27,3 +27,5 @@ Now, you can use it::
     >>> vk = VKAuth(login, pwd, app_id, scopes)
     >>> access_token = vk.access_token
     >>> user_id = vk.user_id
+
+After receiving access_token you can be using `vkontakte package <https://crate.io/packages/vkontakte/>`_
