@@ -1,6 +1,10 @@
-class ParserError(Exception):
+class BasePyVKAError(Exception):
     pass
 
 
-class AuthError(Exception):
+class ParserError(BasePyVKAError):
+    pass
+
+
+class AuthError(BasePyVKAError):
     pass
