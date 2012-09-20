@@ -42,13 +42,13 @@ class VKAuth(object):
 
     def _parse_authorized_url(self, url):
         url = urlparse(url)
-        query_dict = dict(parse_qsl(url.fragment))
-        if 'error' in query_dict:
-            e = '{0}: {1}'.format(query_dict['error'],
-                                  unquote_plus(query_dict['error_description']))
+        params = dict(parse_qsl(url.fragment or url.query))
+        if 'error' in params:
+            e = '{0}: {1}'.format(params['error'],
+                                  unquote_plus(params['error_description']))
             raise AuthError(e)
-        self.access_token = query_dict['access_token']
-        self.used_id = query_dict['user_id']
+        self.access_token = params['access_token']
+        self.used_id = params['user_id']
 
     def _get_app_access(self, page_data):
         parser = self._form_parser_class()
