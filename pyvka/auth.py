@@ -3,7 +3,7 @@ from urllib import urlencode
 import requests
 
 from .parser import FormParser
-from .exceptions import ParserError
+from .exceptions import AuthError
 
 
 class VKAuth(object):
@@ -24,7 +24,7 @@ class VKAuth(object):
         checker = [not parser.form_parsed, parser.url is None,
                    'pass' not in parser.params, 'email' not in parser.params]
         if  any(checker):
-            raise ParserError('Not found form in auth page')
+            raise AuthError('Not found form in auth page')
 
     def _generate_auth_url(self):
         query_params = {
