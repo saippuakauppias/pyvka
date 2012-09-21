@@ -3,22 +3,25 @@ from urllib import urlencode, unquote_plus
 
 import requests
 
-from .parser import FormParser
+from .config import CONFIG
 from .exceptions import AuthError
 
 
 class VKAuth(object):
 
-    def __init__(self, login, pwd, app_id, scopes, form_parser_class=None):
+    def __init__(self, config=None):
+        self.access_token = ''
+        self.used_id = 0
+        self._cookies = {}
+        self.config = CONFIG
+        if config:
+            self.config.update(config)
+
+    def auth(self, login, pwd, app_id, scopes):
         self._login = login
         self._pwd = pwd
         self._app_id = app_id
         self._scopes = scopes
-        self._form_parser_class = form_parser_class or FormParser
-        self._cookies = {}
-        self._auth_url = 'http://oauth.vk.com/authorize'
-        self.access_token = ''
-        self.used_id = 0
         self._get_access_token()
 
     def _get_access_token(self):
@@ -31,8 +34,8 @@ class VKAuth(object):
 
     def _auth(self):
         auth_params = self._generate_auth_params()
-        auth_page = self._send_request(self._auth_url, auth_params)
-        parser = self._form_parser_class()
+        auth_page = self._send_request(self.config['auth_url'], auth_params)
+        parser = self.config['form_parser_class']()
         parser.feed(auth_page.content)
         parser.close()
         checker = [not parser.form_parsed, parser.url is None,
@@ -56,7 +59,7 @@ class VKAuth(object):
         self.used_id = params['user_id']
 
     def _get_app_access(self, page_data):
-        parser = self._form_parser_class()
+        parser = self.config['form_parser_class']()
         parser.feed(page_data)
         parser.close()
         if not parser.form_parsed or parser.url is None:
@@ -78,8 +81,8 @@ class VKAuth(object):
     def _generate_auth_params(self):
         return {
             'client_id': self._app_id,
-            'redirect_uri': 'http://oauth.vk.com/blank.html',
-            'display': 'wap',
+            'redirect_uri': self.config['redirect_uri'],
+            'display': self.config['display'],
             'scope': ','.join(self._scopes),
-            'response_type': 'token'
+            'response_type': self.config['response_type']
         }
