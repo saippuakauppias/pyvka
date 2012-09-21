@@ -12,26 +12,23 @@ class VKAuth(object):
     def __init__(self, config={}):
         self.access_token = ''
         self.used_id = 0
+        self.config = CONFIG
+        self.config.update(config)
         self._cookies = {}
-        self.config = CONFIG.update(config)
 
     def auth(self, login, pwd, app_id, scopes):
-        self._login = login
-        self._pwd = pwd
-        self._app_id = app_id
-        self._scopes = scopes
-        self._get_access_token()
+        auth_params = self._generate_auth_params(app_id, scopes)
+        auth_sended_page = self._auth(login, pwd, auth_params)
+        self._get_access_token(auth_sended_page)
 
-    def _get_access_token(self):
-        auth_sended_page = self._auth()
+    def _get_access_token(self, auth_sended_page):
         if urlparse(auth_sended_page.url).path != '/blank.html':
             authorized_page = self._get_app_access(auth_sended_page.content)
             self._parse_authorized_url(authorized_page.url)
         else:
             self._parse_authorized_url(auth_sended_page.url)
 
-    def _auth(self):
-        auth_params = self._generate_auth_params()
+    def _auth(self, login, pwd, auth_params):
         auth_page = self._send_request(self.config['auth_url'], auth_params)
         parser = self.config['form_parser_class']()
         parser.feed(auth_page.content)
@@ -40,8 +37,8 @@ class VKAuth(object):
                    'pass' not in parser.params, 'email' not in parser.params]
         if any(checker):
             raise AuthError('Not found form in auth page')
-        parser.params['email'] = self._login
-        parser.params['pass'] = self._pwd
+        parser.params['email'] = login
+        parser.params['pass'] = pwd
         auth_sended_page = self._send_request(parser.url, parser.params,
                                               parser.method)
         return auth_sended_page
@@ -76,11 +73,11 @@ class VKAuth(object):
         self._cookies.update(page.cookies.items())
         return page
 
-    def _generate_auth_params(self):
+    def _generate_auth_params(self, app_id, scopes):
         return {
-            'client_id': self._app_id,
+            'client_id': app_id,
             'redirect_uri': self.config['redirect_uri'],
             'display': self.config['display'],
-            'scope': ','.join(self._scopes),
+            'scope': ','.join(scopes),
             'response_type': self.config['response_type']
         }
