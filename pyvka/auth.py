@@ -9,13 +9,11 @@ from .exceptions import AuthError
 
 class VKAuth(object):
 
-    def __init__(self, config=None):
+    def __init__(self, config={}):
         self.access_token = ''
         self.used_id = 0
         self._cookies = {}
-        self.config = CONFIG
-        if config:
-            self.config.update(config)
+        self.config = CONFIG.update(config)
 
     def auth(self, login, pwd, app_id, scopes):
         self._login = login
