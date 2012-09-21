@@ -24,7 +24,8 @@ Now, you can use it::
     >>> pwd = 'b19b00b5'
     >>> app_id = 123456789
     >>> scopes = ['wall', 'friends']
-    >>> vk = VKAuth(login, pwd, app_id, scopes)
+    >>> vk = VKAuth()
+    >>> vk.auth(login, pwd, app_id, scopes)
     >>> access_token = vk.access_token
     >>> user_id = vk.user_id
 
