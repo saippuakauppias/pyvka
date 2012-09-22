@@ -8,8 +8,15 @@ from .exceptions import AuthError
 
 
 class VKAuth(object):
+    """
+    Class for get access_token for vkontakte api.
+    """
 
     def __init__(self, config={}):
+        """
+        Method support set custom configuration
+        """
+
         self.access_token = ''
         self.used_id = 0
         self.config = CONFIG
@@ -17,6 +24,10 @@ class VKAuth(object):
         self._cookies = {}
 
     def auth(self, login, pwd, app_id, scopes):
+        """
+        Base method for authorize in vk.com
+        """
+
         auth_params = self._generate_auth_params(app_id, scopes)
         auth_sended_page = self._login_in_site(login, pwd, auth_params)
         self._get_access_token(auth_sended_page)
