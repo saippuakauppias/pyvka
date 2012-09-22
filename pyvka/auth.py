@@ -18,7 +18,7 @@ class VKAuth(object):
 
     def auth(self, login, pwd, app_id, scopes):
         auth_params = self._generate_auth_params(app_id, scopes)
-        auth_sended_page = self._auth(login, pwd, auth_params)
+        auth_sended_page = self._login_in_site(login, pwd, auth_params)
         self._get_access_token(auth_sended_page)
 
     def _get_access_token(self, auth_sended_page):
@@ -28,7 +28,7 @@ class VKAuth(object):
         else:
             self._parse_authorized_url(auth_sended_page.url)
 
-    def _auth(self, login, pwd, auth_params):
+    def _login_in_site(self, login, pwd, auth_params):
         auth_page = self._send_request(self.config['auth_url'], auth_params)
         parser = self.config['form_parser_class']()
         parser.feed(auth_page.content)
