@@ -30,3 +30,9 @@ Now, you can use it::
     >>> user_id = vk.user_id
 
 After receiving access_token you can be using `vkontakte package <https://crate.io/packages/vkontakte/>`_
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/saippuakauppias/pyvka/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
