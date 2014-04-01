@@ -20,7 +20,7 @@ setup(
     include_package_data=True,
     packages=find_packages(),
     install_requires=[
-        'requests==0.14.0'
+        'requests'
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
